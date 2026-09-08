@@ -1,0 +1,32 @@
+name: Feature request
+description: Suggest an idea or improvement
+title: "[Enhancement]: "
+labels: enhancement
+
+# Reference copy — see the note in bug_report.yml.
+
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description of feature
+      description: Describe your suggestion — the problem or use case it addresses, plus any alternatives considered.
+    validations:
+      required: true
+
+  - type: textarea
+    id: sketches
+    attributes:
+      label: Sketches / mock-ups
+      description: |
+        If it helps, attach a sketch or mock-up — e.g. a rough drawing of a new control or
+        layout. Drag and drop images directly into this field.
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      # No `render:` — see bug_report.yml.
+      label: Session snapshot
+      description: Auto-filled by the in-app button — which app and build, and what it was doing.

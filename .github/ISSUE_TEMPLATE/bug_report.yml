@@ -1,0 +1,41 @@
+name: Bug report
+description: Report something that is broken or incorrect
+title: "[Bug]: "
+labels: bug
+
+# Reference copy. GitHub resolves ?template= only against a repo's own default
+# branch, so this cannot be inherited from the package — copy it into each app's
+# repo. tests/test_bug_report.py guards the parts the URL builder depends on: the
+# `context` id, the title prefix, the label, and the absence of `render:`.
+
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description of the bug
+      description: What went wrong, and what you expected to happen instead.
+      placeholder: When I clicked '...', I expected '...' but instead '...' happened.
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: |
+        Please attach a screenshot of the error or the unexpected result — drag and
+        drop images directly into this field. Screenshots make bugs far quicker to fix.
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      # No `render:` here. The app sends this field already fenced as a ```json
+      # block; `render` would wrap it in a second fence at the same backtick depth,
+      # GitHub would close the outer block at the inner one, and the rest of the
+      # report would arrive as raw text with the backticks showing.
+      label: Session snapshot
+      description: |
+        Auto-filled by the in-app "Report a bug" button — which app and build, and what
+        it was doing at the time. Please keep it; it is how a maintainer reproduces this.

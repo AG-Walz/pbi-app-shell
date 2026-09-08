@@ -1,0 +1,143 @@
+/* The house polish every AG-Walz Dash app shares, on top of its own Mantine theme.
+
+   Served by pbi_app_shell.ui.assets.mount(app), which registers it on the app's Flask
+   server and appends it to external_stylesheets. It is NOT in the app's assets/ folder,
+   because Dash serves exactly one of those and it belongs to the app.
+
+   Load order is the whole reason this is safe to share: external stylesheets are linked
+   BEFORE assets/, so any rule an app puts in its own assets/app.css still wins here.
+   Nothing below names a colour that is not a Mantine variable, an app class, or the one
+   neutral #f7f9fd resting tint — a shared stylesheet that hardcoded a brand would fight
+   every theme it was loaded into. */
+
+/* --- surfaces --- */
+
+/* Card elevation plus a gentle hover lift. The theme gives every Card shadow="sm";
+   this is what makes it respond. */
+.mantine-Card-root {
+    transition: box-shadow 160ms ease, transform 160ms ease;
+}
+.mantine-Card-root:hover {
+    box-shadow: var(--mantine-shadow-md);
+    transform: translateY(-2px);
+}
+
+/* Readouts built on dmc.Paper carry no .mantine-Card-root, so opt them into the same
+   hover-lift by name rather than duplicating the rule per page. */
+.metric-tile {
+    transition: box-shadow 160ms ease, transform 160ms ease;
+}
+.metric-tile:hover {
+    box-shadow: var(--mantine-shadow-md);
+    transform: translateY(-2px);
+}
+
+/* Header depth — separates the 60px bar from scrolling content. */
+.mantine-AppShell-header {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Soft blue-grey on grey "resting" / secondary control surfaces, LIGHT MODE ONLY —
+   dark mode keeps Mantine's defaults, where a light background would clash.
+   To extend this to another control, add its surface selector to the list. */
+[data-mantine-color-scheme="light"] .mantine-SegmentedControl-root,
+[data-mantine-color-scheme="light"] .mantine-Pill-root,
+[data-mantine-color-scheme="light"] .mantine-NumberInput-input,
+[data-mantine-color-scheme="light"] .mantine-Slider-track,
+[data-mantine-color-scheme="light"] .mantine-Switch-root:has(input:not(:checked)) .mantine-Switch-track,
+[data-mantine-color-scheme="light"] .mantine-Checkbox-root:has(input:not(:checked)) .mantine-Checkbox-input,
+[data-mantine-color-scheme="light"] .mantine-Button-root:disabled,
+[data-mantine-color-scheme="light"] .mantine-Button-root[data-disabled],
+[data-mantine-color-scheme="light"] .mantine-NavLink-root:not([data-active]):hover,
+[data-mantine-color-scheme="light"] .mantine-Input-input:disabled,
+[data-mantine-color-scheme="light"] .mantine-Input-input[data-disabled],
+[data-mantine-color-scheme="light"] .mantine-Radio-root:has(input:not(:checked)) .mantine-Radio-radio,
+[data-mantine-color-scheme="light"] .mantine-Combobox-option[data-combobox-active]:not([data-combobox-selected]),
+[data-mantine-color-scheme="light"] .mantine-Combobox-option:hover:not([data-combobox-selected]) {
+    background-color: #f7f9fd;
+}
+
+/* --- navigation --- */
+
+/* Active sidebar link: a brand-coloured left accent bar. Inset, so it cannot shift layout. */
+.mantine-NavLink-root[data-active] {
+    box-shadow: inset 3px 0 0 var(--mantine-primary-color-filled);
+}
+
+/* Soft fade/slide-in of page content on navigation. */
+@keyframes pageFadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+#_pages_content > * {
+    animation: pageFadeIn 240ms ease;
+}
+
+/* Fully-clickable cards (the home gallery and getting-started tiles). */
+.home-card-link {
+    display: block;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+/* --- sidebar parameter panels --- */
+
+/* Force every control in a params column full-width and stack inner Groups vertically, so
+   per-page control widths (w=240, horizontal Groups) still render as a clean vertical
+   sidebar. Targets stable Mantine 7 selector classes. */
+.params-col .mantine-Select-root,
+.params-col .mantine-MultiSelect-root,
+.params-col .mantine-NumberInput-root,
+.params-col .mantine-TextInput-root,
+.params-col .mantine-ColorInput-root,
+.params-col .mantine-Slider-root,
+.params-col .mantine-SegmentedControl-root,
+.params-col .mantine-RadioGroup-root,
+.params-col .mantine-InputWrapper-root {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* Overflow guard. The rule above can only stretch controls that expose a stable
+   `mantine-<X>-root` class; dmc.Box emits none, so a fixed-width Box escapes the clamp and
+   overflows the column. Clamp every direct child of the Stack instead — class-free, so any
+   future fixed-width control is caught too. max-width only: narrow controls (a Switch) keep
+   their natural width, and the Stack's default align="stretch" still fills auto-width
+   children to the card. */
+.params-col .mantine-Stack-root > * {
+    max-width: 100% !important;
+}
+
+.params-col .mantine-Group-root {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--mantine-spacing-sm);
+}
+
+/* Slider mark labels are absolutely positioned below the track and reserve no vertical
+   space, so they collide with whatever sits beneath. Pad the bottom of marked sliders to
+   clear them — padding, not margin, so it does not clash with an inline `mb`. */
+.params-col .mantine-Slider-root:has(.mantine-Slider-markLabel) {
+    padding-bottom: 2rem;
+}
+
+/* --- misc --- */
+
+/* Hover help that must not resize its control. dash-mantine-components wraps a Tooltip's
+   child in a <div style="width: fit-content">, so a fullWidth button inside a tooltip
+   collapses to its natural width. That wrapper has no class and no id, so this is the only
+   handle on it — and its width is inline, hence !important. */
+.tip-fill,
+.tip-fill > div {
+    width: 100% !important;
+}
+
+/* In-app documentation drawer: keep long Markdown readable. */
+.docs-md {
+    line-height: 1.6;
+}
+.docs-md pre {
+    overflow-x: auto;
+}

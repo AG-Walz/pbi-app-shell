@@ -1,0 +1,83 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+# A new push supersedes an in-flight run on the same branch or PR.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      # The floor of requires-python and a current release. Consumers span both:
+      # spectrum_visualizer's conda env and immunoxplore's >3.12 uv project.
+      matrix:
+        python-version: ["3.11", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run tests
+        run: uv run --group dev python -m pytest tests/ -v --tb=short
+
+  # The pure layer's promise is that `[project] dependencies` is empty and stays empty.
+  # tests/test_pure_layer.py blocks dash at import to check that, but only this job proves
+  # the DECLARED dependencies are enough — a stray requirement would still resolve above,
+  # where the dev group installs dash anyway.
+  pure-layer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.11"
+      - name: Install with no extras at all
+        run: uv pip install --system .
+      - name: The pure API must import and work
+        run: |
+          python -c "
+          from pbi_app_shell import AppIdentity, Settings, Workspaces, build_issue_url
+          url, _ = build_issue_url(AppIdentity(name='X', version='1', repo='a/b'),
+                                   'bug_report.yml', {'page': '/'})
+          assert 'issues/new' in url
+          print('pure layer ok')
+          "
+      - name: The ui layer must refuse with instructions, not a bare ImportError
+        run: |
+          python -c "
+          try:
+              import pbi_app_shell.ui
+          except ImportError as exc:
+              assert 'pbi-app-shell[dash]' in str(exc), exc
+              print('ui gate ok')
+          else:
+              raise SystemExit('pbi_app_shell.ui imported without the dash extra')
+          "
+
+  # A wheel that drops ui/static/shell.css builds and tests green, then 404s at runtime.
+  # Editable installs mask it, which is exactly why this is its own job.
+  wheel-contents:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.11"
+      - name: Build a wheel and check the stylesheet is in it
+        run: |
+          uv build --wheel
+          python -c "
+          import glob, zipfile
+          wheel = glob.glob('dist/*.whl')[0]
+          names = zipfile.ZipFile(wheel).namelist()
+          assert 'pbi_app_shell/ui/static/shell.css' in names, names
+          print('stylesheet shipped')
+          "

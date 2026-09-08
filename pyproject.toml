@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pbi-app-shell"
+version = "0.2.0"
+description = "Shared UI plumbing for AG-Walz's Dash apps: the on-disk user/workspace model, the house icon set, the header pieces, the docs drawer and pre-filled GitHub issue reporting."
+authors = [{ name = "AG Walz" }]
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+# Deliberately none. Consumers install this into an app environment they already
+# solved (uv, pip or conda); a shared package that drags Dash or a YAML parser in
+# behind them is a package they will stop upgrading. The pure layer (bug_report,
+# storage) must stay importable from a CLI or a test with no UI at all, which is
+# what the dependency-free CI job checks.
+dependencies = []
+
+[project.optional-dependencies]
+# pbi_app_shell.ui only. Floors, not pins: every consuming app already solved its own
+# environment and all four currently run dash 4.4.x with dmc 2.8. psutil stays out —
+# the header's resource chip degrades to "—" without it, by design.
+dash = [
+    "dash>=4.4",
+    "dash-mantine-components>=2.8",
+]
+
+[project.urls]
+Repository = "https://github.com/AG-Walz/pbi-app-shell"
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "pyyaml",   # the four tests that read the reference issue forms
+    "pylint>=4.0.4",
+    # The ui/ tests render real components and boot a real Dash app, so the dev group
+    # carries the extra. Keep them in step with [project.optional-dependencies].
+    "dash>=4.4",
+    "dash-mantine-components>=2.8",
+    "psutil",   # so the resource-chip tests exercise the real branch, not the fallback
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# The shared stylesheet is data, not code: without this a wheel builds fine and then
+# 404s at runtime, which is the failure nobody catches in an editable install.
+[tool.setuptools.package-data]
+pbi_app_shell = ["ui/static/*.css"]
