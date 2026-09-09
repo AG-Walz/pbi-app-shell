@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Docs: `pbi_app_template` is retired; README and the parity test no longer treat it as a
+  live consumer.
+
 ## 0.2.1 — 2026-09-09
 
 - CI: the `pure-layer` job installed with `uv pip install --system`, which fails on

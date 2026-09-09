@@ -2,8 +2,8 @@
 
 Shared UI plumbing for AG-Walz's Dash apps — the on-disk user/workspace model, the house
 icon set, the header pieces, the docs drawer, the shared stylesheet, and the pre-filled
-GitHub issue reporting that `immunoxplore`, `spectrum_visualizer`, `pbi_app_template` and
-`data_transfer` each carried their own copy of.
+GitHub issue reporting that `immunoxplore`, `spectrum_visualizer`, `data_transfer` and the
+retired `pbi_app_template` skeleton each carried their own copy of.
 
 Public on purpose. There is no data, no secret and no IP in a generic Dash shell, and
 being public removes the auth problem entirely — consumers install from a git tag with
@@ -184,8 +184,9 @@ rather than where several apps' disagreements get litigated — which is how sha
 packages usually die.
 
 The rule started as *byte*-identical, which turned out to measure documentation habits
-rather than agreement. Re-measured semantically across `pbi_app_template`,
-`spectrum_visualizer` and `immunoxplore`:
+rather than agreement. Re-measured semantically across `spectrum_visualizer`, `immunoxplore`
+and `pbi_app_template` (the skeleton the two grew from, retired in September 2026 once
+everything shared had moved here — the table below is its last measurement):
 
 | module | identical in all three | identical in two | genuinely disagree |
 |---|---|---|---|
@@ -195,14 +196,15 @@ rather than agreement. Re-measured semantically across `pbi_app_template`,
 | `components/docs_drawer.py` | all but the route map | — | — |
 | `components/shell.py` | 26 of 41 | 12 | 3 |
 
-`tests/test_parity.py` re-measures the icon half against the apps themselves whenever they
-are checked out beside this repo, because a claim about code that lives somewhere else rots
+`tests/test_parity.py` re-measures the icon half against the live apps whenever they are
+checked out beside this repo, because a claim about code that lives somewhere else rots
 quietly.
 
 Still out, and recorded so it is not lost: `build_shell` and the AppShell, the user and
 workspace drawers, the delete modals, the settings drawer and the remaining shell callbacks
 (next round, once this API has been under real use); `services/runs.py` and
-`snapshots.py` (not shared by two apps yet); `settings_panel.py` (identical in two apps
+`snapshots.py` (not shared by two apps; the template's `snapshots.py` survives only in its
+archive); `settings_panel.py` (identical in two apps
 only because one never replaced the example controls its own docstring tells it to
 replace); and `data_transfer`'s drifted `_resmon` / `_report_menu` / `_host_badge`.
 

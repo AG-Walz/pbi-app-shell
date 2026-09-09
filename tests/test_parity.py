@@ -25,7 +25,8 @@ from pbi_app_shell.ui.icons import HOUSE_GLYPHS, HOUSE_PALETTE
 _SIBLINGS = Path(__file__).resolve().parents[2]
 
 APPS = {
-    "pbi_app_template": _SIBLINGS / "pbi_app_template/dash-app/components/icons.py",
+    # pbi_app_template was retired in 2026-09 once its shared parts lived here; the three
+    # live consumers are what parity is measured against.
     "spectrum_visualizer": _SIBLINGS / "spectrum_visualizer/dash_app/components/icons.py",
     "immunoxplore": _SIBLINGS / "immunoxplore/dash-app/components/icons.py",
     "data_transfer": _SIBLINGS / "infra/data_transfer/components/icons.py",
