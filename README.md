@@ -15,18 +15,18 @@ Pin a tag. Never `@main` — that rebuilds the copy-paste problem as silent drif
 
 ```toml
 # pyproject.toml, under the `dash` dependency group — immunoxplore
-"pbi-app-shell[dash] @ git+https://github.com/AG-Walz/pbi-app-shell@v0.2.0"
+"pbi-app-shell[dash] @ git+https://github.com/AG-Walz/pbi-app-shell@v0.2.1"
 ```
 
 ```yaml
 # environment.yml, under pip: — spectrum_visualizer
   - pip:
-    - pbi-app-shell[dash] @ git+https://github.com/AG-Walz/pbi-app-shell@v0.2.0
+    - pbi-app-shell[dash] @ git+https://github.com/AG-Walz/pbi-app-shell@v0.2.1
 ```
 
 ```
 # requirements.txt — data_transfer
-pbi-app-shell[dash] @ git+https://github.com/AG-Walz/pbi-app-shell@v0.2.0
+pbi-app-shell[dash] @ git+https://github.com/AG-Walz/pbi-app-shell@v0.2.1
 ```
 
 Drop the `[dash]` for a consumer that only wants the pure layer.

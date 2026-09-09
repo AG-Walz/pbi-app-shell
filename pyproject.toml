@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pbi-app-shell"
-version = "0.2.0"
+version = "0.2.1"
 description = "Shared UI plumbing for AG-Walz's Dash apps: the on-disk user/workspace model, the house icon set, the header pieces, the docs drawer and pre-filled GitHub issue reporting."
 authors = [{ name = "AG Walz" }]
 readme = "README.md"

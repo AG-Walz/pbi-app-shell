@@ -39,11 +39,13 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           python-version: "3.11"
+      # Into a venv, not --system: ubuntu-latest ships no Python 3.11, and setup-uv's
+      # python-version only tells uv which interpreter to fetch, not the runner's PATH.
       - name: Install with no extras at all
-        run: uv pip install --system .
+        run: uv venv && uv pip install .
       - name: The pure API must import and work
         run: |
-          python -c "
+          .venv/bin/python -c "
           from pbi_app_shell import AppIdentity, Settings, Workspaces, build_issue_url
           url, _ = build_issue_url(AppIdentity(name='X', version='1', repo='a/b'),
                                    'bug_report.yml', {'page': '/'})
@@ -52,7 +54,7 @@ jobs:
           "
       - name: The ui layer must refuse with instructions, not a bare ImportError
         run: |
-          python -c "
+          .venv/bin/python -c "
           try:
               import pbi_app_shell.ui
           except ImportError as exc:
